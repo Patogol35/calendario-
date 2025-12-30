@@ -119,28 +119,13 @@ export default function App() {
               color="text.secondary"
               sx={{ maxWidth: 600, mx: 'auto', px: 2, fontWeight: 400 }}
             >
-              Explora millones de libros y descubre sus detalles.
+              Autor: Jorge Patricio Santamaría Cherrez
             </Typography>
           </Box>
 
           <Box sx={{ display: 'flex', justifyContent: 'center', mb: 8 }}>
-            <Paper
-              elevation={0}
-              sx={{
-                p: 1,
-                width: '100%',
-                maxWidth: 720,
-                borderRadius: '20px',
-                bgcolor: mode === 'light' ? '#ffffff' : '#1e293b',
-                border: `1px solid ${mode === 'light' ? '#e2e8f0' : '#334155'}`,
-                boxShadow: mode === 'light'
-                  ? '0 4px 20px rgba(0,0,0,0.06)'
-                  : '0 4px 20px rgba(0,0,0,0.15)',
-              }}
-            >
-              <SearchBar onSearch={handleSearch} />
-            </Paper>
-          </Box>
+  <SearchBar onSearch={handleSearch} />
+</Box>
 
           {/* Zona de resultados con enfoque accesible */}
           <Box
