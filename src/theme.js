@@ -1,54 +1,52 @@
 // src/theme.js
-import { createTheme } from '@mui/material/styles';
-import { grey } from '@mui/material/colors';
+import { createTheme, useMediaQuery } from '@mui/material';
+import { grey, blue, red } from '@mui/material/colors';
 
-export const theme = createTheme({
+export const getDesignTokens = (mode) => ({
   palette: {
-    mode: 'light', // Puedes cambiar a 'dark' si quieres por defecto
-    primary: {
-      main: '#1976d2', // Azul profesional
-    },
-    secondary: {
-      main: '#f50057', // Rosa acento (opcional, para botones destacados)
-    },
-    background: {
-      default: '#f8fafc',
-      paper: '#ffffff',
-    },
-    text: {
-      primary: '#1e293b',
-      secondary: '#64748b',
-    },
+    mode,
+    ...(mode === 'light'
+      ? {
+          primary: { main: blue[700] },
+          secondary: { main: red[400] },
+          background: { default: '#f9fbfd', paper: '#ffffff' },
+          text: { primary: '#111827', secondary: '#4b5563' },
+        }
+      : {
+          primary: { main: blue[400] },
+          secondary: { main: red[300] },
+          background: { default: '#0f172a', paper: '#1e293b' },
+          text: { primary: '#f1f5f9', secondary: '#94a3b8' },
+        }),
   },
   typography: {
     fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
-    h1: { fontWeight: 700, fontSize: '2.5rem' },
-    h2: { fontWeight: 600, fontSize: '2rem' },
-    body1: { fontSize: '1rem', lineHeight: 1.6 },
+    h1: { fontFamily: '"Roboto Serif", serif', fontWeight: 700, fontSize: '2.8rem' },
+    h2: { fontFamily: '"Roboto Serif", serif', fontWeight: 600, fontSize: '2.2rem' },
+    body1: { fontSize: '1.02rem', lineHeight: 1.7 },
+  },
+  shape: {
+    borderRadius: 16,
   },
   components: {
     MuiCard: {
       styleOverrides: {
         root: {
-          borderRadius: '16px',
-          boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
-          transition: 'transform 0.2s, box-shadow 0.2s',
-          '&:hover': {
-            transform: 'translateY(-4px)',
-            boxShadow: '0 6px 24px rgba(0,0,0,0.12)',
-          },
+          borderRadius: '20px',
+          overflow: 'hidden',
         },
       },
     },
     MuiButton: {
       styleOverrides: {
         root: {
+          borderRadius: '14px',
           textTransform: 'none',
-          borderRadius: '12px',
           fontWeight: 600,
-          padding: '10px 24px',
         },
       },
     },
   },
 });
+
+export const theme = (mode) => createTheme(getDesignTokens(mode));
