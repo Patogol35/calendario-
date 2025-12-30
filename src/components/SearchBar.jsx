@@ -21,7 +21,7 @@ export default function SearchBar({ onSearch }) {
       try {
         const res = await axios.get(`${API_BASE}?q=${encodeURIComponent(inputValue)}&maxResults=6`);
         const suggestions = (res.data.items || []).map((item) => ({
-          label: `${item.volumeInfo.title || 'Sin título'}${item.volumeInfo.authors ? ' - ' + item.volumeInfo.authors[0] : ''}`,
+          label: `${item.volumeInfo.title || 'Sin título'}${item.volumeInfo.authors ? ' – ' + item.volumeInfo.authors[0] : ''}`,
           value: item.volumeInfo.title || inputValue,
         }));
         setOptions(suggestions);
@@ -46,11 +46,7 @@ export default function SearchBar({ onSearch }) {
   };
 
   return (
-    <Box
-      component="form"
-      onSubmit={handleSubmit}
-      sx={{ width: '100%, maxWidth: 700', mx: 'auto', mb: 6 }}
-    >
+    <Box component="form" onSubmit={handleSubmit} sx={{ width: '100%' }}>
       <Autocomplete
         freeSolo
         open={open}
@@ -63,22 +59,21 @@ export default function SearchBar({ onSearch }) {
           <TextField
             {...params}
             placeholder="Ej: El nombre del viento, Dan Brown, 9780307474278..."
-            variant="outlined"
+            variant="standard"
             InputProps={{
               ...params.InputProps,
+              disableUnderline: true,
               endAdornment: (
-                <>
-                  {params.InputProps.endAdornment}
-                  <IconButton type="submit" edge="end">
-                    <SearchIcon />
-                  </IconButton>
-                </>
+                <IconButton type="submit" edge="end" sx={{ mr: -1 }}>
+                  <SearchIcon sx={{ color: 'text.secondary' }} />
+                </IconButton>
               ),
             }}
             sx={{
-              '& .MuiOutlinedInput-root': {
-                pr: 0,
-                borderRadius: '16px',
+              '& input': {
+                py: 1.5,
+                px: 2,
+                fontSize: '1.05rem',
               },
             }}
           />
@@ -87,4 +82,4 @@ export default function SearchBar({ onSearch }) {
       />
     </Box>
   );
-      }
+}
