@@ -1,29 +1,58 @@
 // src/theme.js
-import { createTheme, useMediaQuery } from '@mui/material';
-import { grey, blue, red } from '@mui/material/colors';
+import { createTheme } from '@mui/material/styles';
 
 export const getDesignTokens = (mode) => ({
   palette: {
     mode,
     ...(mode === 'light'
       ? {
-          primary: { main: blue[700] },
-          secondary: { main: red[400] },
-          background: { default: '#f9fbfd', paper: '#ffffff' },
-          text: { primary: '#111827', secondary: '#4b5563' },
+          primary: { main: '#2563eb' },
+          secondary: { main: '#dc2626' },
+          background: {
+            default: '#f8fafc',
+            paper: '#ffffff',
+          },
+          text: {
+            primary: '#0f172a',
+            secondary: '#475569',
+          },
+          divider: '#e2e8f0',
         }
       : {
-          primary: { main: blue[400] },
-          secondary: { main: red[300] },
-          background: { default: '#0f172a', paper: '#1e293b' },
-          text: { primary: '#f1f5f9', secondary: '#94a3b8' },
+          primary: { main: '#60a5fa' },
+          secondary: { main: '#f87171' },
+          background: {
+            default: '#020814',
+            paper: '#0f172a',
+          },
+          text: {
+            primary: '#f1f5f9',
+            secondary: '#94a3b8',
+          },
+          divider: '#1e293b',
         }),
   },
   typography: {
-    fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
-    h1: { fontFamily: '"Roboto Serif", serif', fontWeight: 700, fontSize: '2.8rem' },
-    h2: { fontFamily: '"Roboto Serif", serif', fontWeight: 600, fontSize: '2.2rem' },
-    body1: { fontSize: '1.02rem', lineHeight: 1.7 },
+    fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+    h1: {
+      fontFamily: '"Inter", sans-serif',
+      fontWeight: 800,
+      fontSize: '3rem',
+      letterSpacing: '-0.03em',
+    },
+    h2: {
+      fontFamily: '"Inter", sans-serif',
+      fontWeight: 700,
+      fontSize: '2.25rem',
+    },
+    h6: {
+      fontWeight: 700,
+      fontSize: '1.1rem',
+    },
+    body1: {
+      fontSize: '1.02rem',
+      lineHeight: 1.7,
+    },
   },
   shape: {
     borderRadius: 16,
@@ -34,6 +63,7 @@ export const getDesignTokens = (mode) => ({
         root: {
           borderRadius: '20px',
           overflow: 'hidden',
+          border: `1px solid ${mode === 'light' ? '#e2e8f0' : '#1e293b'}`,
         },
       },
     },
@@ -43,6 +73,19 @@ export const getDesignTokens = (mode) => ({
           borderRadius: '14px',
           textTransform: 'none',
           fontWeight: 600,
+          padding: '8px 20px',
+        },
+        outlined: {
+          borderWidth: '1.5px',
+        },
+      },
+    },
+    MuiTextField: {
+      styleOverrides: {
+        root: {
+          '& .MuiOutlinedInput-root': {
+            borderRadius: '16px',
+          },
         },
       },
     },
