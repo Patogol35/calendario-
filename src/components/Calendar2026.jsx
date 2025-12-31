@@ -25,10 +25,18 @@ const MONTHS = [
 
 const DAYS = ["L", "M", "M", "J", "V", "S", "D"];
 
+/* =========================
+   FESTIVOS POR AÑO
+========================= */
 const SPECIAL_DAYS = {
-  "2026-01-01": "🎉 Año Nuevo",
-  "2026-05-24": "🎖️ Batalla de Pichincha",
-  "2026-12-25": "🎄 Navidad",
+  2025: {
+    "01-01": "🎉 Año Nuevo",
+  },
+  2026: {
+    "01-01": "🎉 Año Nuevo",
+    "05-24": "🎖️ Batalla de Pichincha",
+    "12-25": "🎄 Navidad",
+  },
 };
 
 /* =========================
@@ -49,67 +57,50 @@ function getCalendar(year, month) {
 /* =========================
    COMPONENTE
 ========================= */
-export default function Calendar2026() {
+export default function Calendar() {
   const theme = useTheme();
 
-  const [month, setMonth] = useState(0);
+  const today = new Date();
+
+  const [month, setMonth] = useState(today.getMonth());
+  const [year, setYear] = useState(today.getFullYear());
   const [selectedDay, setSelectedDay] = useState(null);
 
-  // 👉 FECHA ACTUAL REAL (SOLO PARA EL TITULO)
-  const [today, setToday] = useState(new Date());
-
-  const year = 2026;
   const calendar = getCalendar(year, month);
 
   /* =========================
-     ACTUALIZA SOLO AL CAMBIAR EL DIA
+     HEADER SOLO FECHA ACTUAL
   ========================= */
-  useEffect(() => {
-    const now = new Date();
-
-    const nextMidnight = new Date(
-      now.getFullYear(),
-      now.getMonth(),
-      now.getDate() + 1,
-      0, 0, 1
-    );
-
-    const timeout = nextMidnight.getTime() - now.getTime();
-
-    const timer = setTimeout(() => {
-      setToday(new Date());
-    }, timeout);
-
-    return () => clearTimeout(timer);
-  }, [today]);
-
   const dayName = today.toLocaleDateString("es-ES", { weekday: "long" });
   const dayNumber = today.getDate();
   const monthNameToday = MONTHS[today.getMonth()];
   const yearToday = today.getFullYear();
 
+  /* =========================
+     NAVEGACION MES/AÑO
+  ========================= */
+  const prevMonth = () => {
+    if (month === 0) {
+      setMonth(11);
+      setYear(y => y - 1);
+    } else {
+      setMonth(m => m - 1);
+    }
+  };
+
+  const nextMonth = () => {
+    if (month === 11) {
+      setMonth(0);
+      setYear(y => y + 1);
+    } else {
+      setMonth(m => m + 1);
+    }
+  };
+
+  const years = Array.from({ length: 50 }, (_, i) => year - 25 + i);
+
   return (
     <Box>
-      {/* TITULO */}
-      <Box textAlign="center" mb={5}>
-        <Typography
-          variant="h3"
-          fontWeight={900}
-          sx={{
-            background: "linear-gradient(135deg,#1e40af,#2563eb)",
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-            letterSpacing: 1.2,
-          }}
-        >
-          Calendario
-        </Typography>
-
-        <Typography color="text.secondary" sx={{ mt: 1 }}>
-          Autor · Jorge Patricio Santamaría Cherrez
-        </Typography>
-      </Box>
-
       <Paper
         elevation={10}
         sx={{
@@ -117,10 +108,9 @@ export default function Calendar2026() {
           mx: "auto",
           borderRadius: 3,
           overflow: "hidden",
-          bgcolor: "background.paper",
         }}
       >
-        {/* HEADER — SOLO FECHA ACTUAL */}
+        {/* HEADER */}
         <Box
           sx={{
             background: "linear-gradient(135deg,#1e3a8a,#2563eb)",
@@ -136,7 +126,7 @@ export default function Calendar2026() {
           </Typography>
         </Box>
 
-        {/* SELECTOR MES */}
+        {/* SELECTOR MES / AÑO */}
         <Box
           display="flex"
           alignItems="center"
@@ -144,27 +134,37 @@ export default function Calendar2026() {
           px={2}
           py={1.5}
         >
-          <IconButton onClick={() => setMonth(m => (m === 0 ? 11 : m - 1))}>
+          <IconButton onClick={prevMonth}>
             <ChevronLeftIcon />
           </IconButton>
 
           <Select
             value={month}
-            onChange={(e) => {
-              setMonth(e.target.value);
-              setSelectedDay(null);
-            }}
+            onChange={(e) => setMonth(e.target.value)}
             size="small"
-            sx={{ fontWeight: 600, minWidth: 160 }}
+            sx={{ minWidth: 120, fontWeight: 600 }}
           >
             {MONTHS.map((m, i) => (
               <MenuItem key={i} value={i}>
-                {m} {year}
+                {m}
               </MenuItem>
             ))}
           </Select>
 
-          <IconButton onClick={() => setMonth(m => (m === 11 ? 0 : m + 1))}>
+          <Select
+            value={year}
+            onChange={(e) => setYear(e.target.value)}
+            size="small"
+            sx={{ minWidth: 100, fontWeight: 600 }}
+          >
+            {years.map(y => (
+              <MenuItem key={y} value={y}>
+                {y}
+              </MenuItem>
+            ))}
+          </Select>
+
+          <IconButton onClick={nextMonth}>
             <ChevronRightIcon />
           </IconButton>
         </Box>
@@ -199,13 +199,7 @@ export default function Calendar2026() {
 
         {/* CALENDARIO */}
         <AnimatePresence mode="wait">
-          <motion.div
-            key={month}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.25 }}
-          >
+          <motion.div key={`${month}-${year}`}>
             <Box
               px={2}
               pb={2}
@@ -220,24 +214,27 @@ export default function Calendar2026() {
                 const isSaturday = col === 5;
                 const isSunday = col === 6;
 
-                const key = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-                const special = SPECIAL_DAYS[key];
+                const special =
+                  day &&
+                  SPECIAL_DAYS[year]?.[
+                    `${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`
+                  ];
 
                 return (
                   <Box key={index} sx={{ height: 56, display: "flex", justifyContent: "center" }}>
                     {day && (
-                      <Tooltip title={special || "Día del calendario"}>
+                      <Tooltip title={special || ""}>
                         <Box
                           onClick={() => setSelectedDay(day)}
                           sx={{
                             width: 42,
                             height: 42,
                             borderRadius: 2,
+                            cursor: "pointer",
                             display: "flex",
                             flexDirection: "column",
                             alignItems: "center",
                             justifyContent: "center",
-                            cursor: "pointer",
                             bgcolor: selectedDay === day ? theme.palette.primary.dark : "transparent",
                             color:
                               selectedDay === day
@@ -247,14 +244,10 @@ export default function Calendar2026() {
                                 : isSaturday
                                 ? theme.palette.primary.main
                                 : theme.palette.text.primary,
-                            transition: "all .2s",
-                            "&:hover": {
-                              bgcolor: theme.palette.action.hover,
-                            },
                           }}
                         >
                           <Typography fontSize={14}>{day}</Typography>
-                          <CalendarMonthIcon sx={{ fontSize: 13, opacity: 0.7 }} />
+                          <CalendarMonthIcon sx={{ fontSize: 13, opacity: 0.6 }} />
                         </Box>
                       </Tooltip>
                     )}
@@ -267,4 +260,4 @@ export default function Calendar2026() {
       </Paper>
     </Box>
   );
-                            }
+        }
