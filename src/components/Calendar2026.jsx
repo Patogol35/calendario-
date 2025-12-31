@@ -5,6 +5,7 @@ import {
   Typography,
   IconButton,
   Grid,
+  Divider,
 } from "@mui/material";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
@@ -15,10 +16,11 @@ const months = [
   "Septiembre", "Octubre", "Noviembre", "Diciembre",
 ];
 
-const days = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"];
+const days = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"];
 
 const getMonthData = (year, month) => {
-  const firstDay = new Date(year, month, 1).getDay() || 7;
+  const jsDay = new Date(year, month, 1).getDay();
+  const firstDay = jsDay === 0 ? 6 : jsDay - 1;
   const totalDays = new Date(year, month + 1, 0).getDate();
   return { firstDay, totalDays };
 };
@@ -30,86 +32,109 @@ export default function Calendar2026() {
 
   const { firstDay, totalDays } = getMonthData(year, month);
 
-  const prevMonth = () => setMonth((m) => (m === 0 ? 11 : m - 1));
-  const nextMonth = () => setMonth((m) => (m === 11 ? 0 : m + 1));
-
   return (
-    <Paper
-      elevation={8}
-      sx={{
-        p: 4,
-        maxWidth: 900,
-        mx: "auto",
-        border: "1px solid rgba(255,255,255,0.08)",
-      }}
-    >
-      {/* Header */}
-      <Box display="flex" alignItems="center" justifyContent="space-between" mb={3}>
-        <IconButton onClick={prevMonth}>
-          <ChevronLeftIcon />
-        </IconButton>
+    <Box>
+      {/* TÍTULO */}
+      <Typography variant="h3" textAlign="center" fontWeight={800} mb={1}>
+        📅 Calendario 2026
+      </Typography>
 
-        <Typography variant="h4" fontWeight={700}>
-          {months[month]} {year}
-        </Typography>
+      {/* AUTOR */}
+      <Typography
+        textAlign="center"
+        color="text.secondary"
+        mb={4}
+      >
+        Autor: Jorge Patricio Santamaría Cherrez
+      </Typography>
 
-        <IconButton onClick={nextMonth}>
-          <ChevronRightIcon />
-        </IconButton>
-      </Box>
+      <Paper
+        elevation={6}
+        sx={{
+          p: 4,
+          maxWidth: 900,
+          mx: "auto",
+          border: "1px solid rgba(0,0,0,0.08)",
+        }}
+      >
+        {/* HEADER MES */}
+        <Box
+          display="flex"
+          alignItems="center"
+          justifyContent="space-between"
+          mb={2}
+        >
+          <IconButton onClick={() => setMonth(m => (m === 0 ? 11 : m - 1))}>
+            <ChevronLeftIcon />
+          </IconButton>
 
-      {/* Days header */}
-      <Grid container>
-        {days.map((day) => (
-          <Grid item xs={12 / 7} key={day}>
-            <Typography
-              textAlign="center"
-              fontWeight={600}
-              color="text.secondary"
-            >
-              {day}
-            </Typography>
-          </Grid>
-        ))}
-      </Grid>
+          <Typography variant="h4" fontWeight={700}>
+            {months[month]} {year}
+          </Typography>
 
-      {/* Calendar */}
-      <Grid container mt={1}>
-        {[...Array(firstDay - 1)].map((_, i) => (
-          <Grid item xs={12 / 7} key={`empty-${i}`} />
-        ))}
+          <IconButton onClick={() => setMonth(m => (m === 11 ? 0 : m + 1))}>
+            <ChevronRightIcon />
+          </IconButton>
+        </Box>
 
-        {[...Array(totalDays)].map((_, i) => {
-          const dayNumber = i + 1;
-          const isToday =
-            today.getFullYear() === year &&
-            today.getMonth() === month &&
-            today.getDate() === dayNumber;
+        <Divider sx={{ mb: 2 }} />
 
-          return (
-            <Grid item xs={12 / 7} key={dayNumber}>
-              <Box
-                sx={{
-                  height: 80,
-                  border: "1px solid rgba(255,255,255,0.06)",
-                  display: "flex",
-                  alignItems: "flex-start",
-                  justifyContent: "flex-end",
-                  p: 1,
-                  bgcolor: isToday ? "primary.main" : "transparent",
-                  color: isToday ? "#000" : "inherit",
-                  transition: "0.2s",
-                  "&:hover": {
-                    bgcolor: isToday ? "primary.main" : "rgba(255,255,255,0.05)",
-                  },
-                }}
+        {/* DÍAS */}
+        <Grid container>
+          {days.map(day => (
+            <Grid item xs={12 / 7} key={day}>
+              <Typography
+                textAlign="center"
+                fontWeight={600}
+                color="text.secondary"
               >
-                <Typography fontWeight={600}>{dayNumber}</Typography>
-              </Box>
+                {day}
+              </Typography>
             </Grid>
-          );
-        })}
-      </Grid>
-    </Paper>
+          ))}
+        </Grid>
+
+        {/* CALENDARIO */}
+        <Grid container mt={1}>
+          {[...Array(firstDay)].map((_, i) => (
+            <Grid item xs={12 / 7} key={`empty-${i}`} />
+          ))}
+
+          {[...Array(totalDays)].map((_, i) => {
+            const dayNumber = i + 1;
+            const isToday =
+              today.getFullYear() === year &&
+              today.getMonth() === month &&
+              today.getDate() === dayNumber;
+
+            return (
+              <Grid item xs={12 / 7} key={dayNumber}>
+                <Box
+                  sx={{
+                    height: 80,
+                    border: "1px solid rgba(0,0,0,0.08)",
+                    p: 1,
+                    display: "flex",
+                    justifyContent: "flex-end",
+                    bgcolor: isToday ? "primary.main" : "transparent",
+                    color: isToday ? "#000" : "inherit",
+                    transition: "0.2s",
+                    "&:hover": {
+                      bgcolor: isToday
+                        ? "primary.main"
+                        : "action.hover",
+                    },
+                  }}
+                >
+                  <Typography fontWeight={600}>
+                    {dayNumber}
+                  </Typography>
+                </Box>
+              </Grid>
+            );
+          })}
+        </Grid>
+      </Paper>
+    </Box>
   );
 }
