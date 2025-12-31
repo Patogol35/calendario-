@@ -4,231 +4,192 @@ import {
   Paper,
   Typography,
   IconButton,
-  Tooltip,
+  Grid,
+  Divider,
 } from "@mui/material";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import { motion, AnimatePresence } from "framer-motion";
 
-/* =========================
-   CONSTANTES
-========================= */
 const MONTHS = [
   "Enero", "Febrero", "Marzo", "Abril",
   "Mayo", "Junio", "Julio", "Agosto",
   "Septiembre", "Octubre", "Noviembre", "Diciembre",
 ];
 
-const DAYS = ["L", "M", "M", "J", "V", "S", "D"];
+// Empieza en lunes (no Android style)
+const DAYS = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"];
 
+// Días especiales (puedes añadir más)
 const SPECIAL_DAYS = {
-  "2026-01-01": "🎉 Año Nuevo",
-  "2026-05-24": "🎖️ Batalla de Pichincha",
-  "2026-12-25": "🎄 Navidad",
+  "1-0": "Año Nuevo",
+  "25-11": "Navidad",
 };
 
-/* =========================
-   LOGICA CALENDARIO
-========================= */
 function getCalendar(year, month) {
-  const jsDay = new Date(year, month, 1).getDay();
-  const firstDay = jsDay === 0 ? 6 : jsDay - 1;
+  const firstDay = new Date(year, month, 1).getDay();
+  const adjustedFirstDay = firstDay === 0 ? 6 : firstDay - 1;
   const daysInMonth = new Date(year, month + 1, 0).getDate();
 
   const cells = [];
-  for (let i = 0; i < firstDay; i++) cells.push(null);
+  for (let i = 0; i < adjustedFirstDay; i++) cells.push(null);
   for (let d = 1; d <= daysInMonth; d++) cells.push(d);
 
   return cells;
 }
 
-const isSameDate = (y, m, d, date) =>
-  d &&
-  date.getFullYear() === y &&
-  date.getMonth() === m &&
-  date.getDate() === d;
-
-/* =========================
-   COMPONENTE
-========================= */
 export default function Calendar2026() {
   const [month, setMonth] = useState(0);
-  const [selectedDay, setSelectedDay] = useState(null);
-
   const year = 2026;
   const today = new Date();
+
   const calendar = getCalendar(year, month);
 
-  const dayName = today.toLocaleDateString("es-ES", { weekday: "long" });
-  const monthName = MONTHS[today.getMonth()];
-
   return (
-    <Box>
-      {/* TITULO */}
-      <Typography variant="h3" fontWeight={800} textAlign="center" mb={1}>
-        Calendario
+    <Box sx={{ py: 6 }}>
+      {/* TÍTULO */}
+      <Typography
+        variant="h2"
+        fontWeight={900}
+        textAlign="center"
+        letterSpacing={1}
+      >
+        Calendario 2026
       </Typography>
 
-      <Typography textAlign="center" color="text.secondary" mb={4}>
-        Jorge Patricio Santamaría Cherrez
+      <Typography
+        textAlign="center"
+        color="text.secondary"
+        fontSize={16}
+        mb={3}
+      >
+        Autor: Jorge Patricio Santamaría Cherrez
       </Typography>
+
+      {/* FECHA DIFERENTE A ANDROID */}
+      <Box textAlign="center" mb={4}>
+        <Typography
+          fontSize={48}
+          fontWeight={800}
+          color="primary.main"
+        >
+          2026
+        </Typography>
+        <Typography
+          fontSize={18}
+          color="text.secondary"
+          letterSpacing={1}
+        >
+          {MONTHS[month]}, {year}
+        </Typography>
+      </Box>
 
       <Paper
-        elevation={10}
+        elevation={8}
         sx={{
-          maxWidth: 420,
+          maxWidth: 950,
           mx: "auto",
+          p: 4,
           borderRadius: 3,
-          overflow: "hidden",
         }}
       >
-        {/* HEADER AZUL (NO ANDROID) */}
-        <Box
-          sx={{
-            background: "linear-gradient(135deg,#1e3a8a,#2563eb)",
-            color: "#fff",
-            p: 3,
-          }}
-        >
-          <Typography
-            sx={{ textTransform: "capitalize", opacity: 0.9 }}
-          >
-            {dayName} · {today.getDate()}
-          </Typography>
-          <Typography variant="h5" fontWeight={800}>
-            {monthName} {year}
-          </Typography>
-        </Box>
-
-        {/* MES */}
+        {/* HEADER */}
         <Box
           display="flex"
           alignItems="center"
           justifyContent="space-between"
-          px={2}
-          py={1.5}
+          mb={3}
         >
-          <IconButton onClick={() => setMonth(m => (m === 0 ? 11 : m - 1))}>
+          <IconButton
+            onClick={() => setMonth(m => (m === 0 ? 11 : m - 1))}
+          >
             <ChevronLeftIcon />
           </IconButton>
 
-          <Typography fontWeight={600}>
-            {MONTHS[month]} {year}
+          <Typography variant="h4" fontWeight={700}>
+            {MONTHS[month]}
           </Typography>
 
-          <IconButton onClick={() => setMonth(m => (m === 11 ? 0 : m + 1))}>
+          <IconButton
+            onClick={() => setMonth(m => (m === 11 ? 0 : m + 1))}
+          >
             <ChevronRightIcon />
           </IconButton>
         </Box>
 
-        {/* DIAS */}
-        <Box
-          px={2}
-          sx={{
-            display: "grid",
-            gridTemplateColumns: "repeat(7, 1fr)",
-            textAlign: "center",
-            mb: 1,
-          }}
-        >
-          {DAYS.map((d) => (
-            <Typography
-              key={d}
-              fontSize={12}
-              color="text.secondary"
-            >
-              {d}
-            </Typography>
+        <Divider sx={{ mb: 2 }} />
+
+        {/* DÍAS */}
+        <Grid container>
+          {DAYS.map(day => (
+            <Grid item xs={12 / 7} key={day}>
+              <Typography
+                textAlign="center"
+                fontWeight={700}
+                color="primary.main"
+                sx={{ mb: 1 }}
+              >
+                {day}
+              </Typography>
+            </Grid>
           ))}
-        </Box>
+        </Grid>
 
         {/* CALENDARIO */}
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={month}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.25 }}
-          >
-            <Box
-              px={2}
-              pb={2}
-              sx={{
-                display: "grid",
-                gridTemplateColumns: "repeat(7, 1fr)",
-                rowGap: 8,
-              }}
-            >
-              {calendar.map((day, index) => {
-                const col = index % 7;
-                const isWeekend = col >= 5;
-                const isToday = isSameDate(year, month, day, today);
-                const isSelected = day === selectedDay;
+        <Grid container>
+          {calendar.map((day, index) => {
+            const isToday =
+              day &&
+              today.getFullYear() === year &&
+              today.getMonth() === month &&
+              today.getDate() === day;
 
-                const key = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-                const special = SPECIAL_DAYS[key];
+            const special =
+              day && SPECIAL_DAYS[`${day}-${month}`];
 
-                return (
-                  <Box
-                    key={index}
-                    sx={{
-                      height: 48,
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    {day && (
-                      <Tooltip title={special || ""}>
-                        <Box
-                          onClick={() => setSelectedDay(day)}
-                          sx={{
-                            width: 34,
-                            height: 34,
-                            borderRadius: 2,
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            cursor: "pointer",
-                            bgcolor: isSelected
-                              ? "#1e40af"
-                              : isToday
-                              ? "#2563eb"
-                              : "transparent",
-                            color: isSelected || isToday
-                              ? "#fff"
-                              : isWeekend
-                              ? "#64748b"
-                              : "text.primary",
-                            fontWeight: isToday || isSelected ? 700 : 400,
-                            position: "relative",
-                          }}
+            return (
+              <Grid item xs={12 / 7} key={index}>
+                <Box
+                  sx={{
+                    height: 95,
+                    border: "1px solid",
+                    borderColor: "divider",
+                    p: 1.5,
+                    bgcolor: isToday
+                      ? "primary.light"
+                      : "background.paper",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  {day && (
+                    <>
+                      <Typography
+                        fontWeight={700}
+                        fontSize={16}
+                        textAlign="right"
+                        color={isToday ? "primary.dark" : "text.primary"}
+                      >
+                        {day}
+                      </Typography>
+
+                      {special && (
+                        <Typography
+                          fontSize={11}
+                          color="primary.main"
+                          fontWeight={600}
                         >
-                          {day}
-
-                          {special && (
-                            <Box
-                              sx={{
-                                width: 6,
-                                height: 6,
-                                borderRadius: "50%",
-                                bgcolor: "#38bdf8",
-                                position: "absolute",
-                                bottom: 4,
-                              }}
-                            />
-                          )}
-                        </Box>
-                      </Tooltip>
-                    )}
-                  </Box>
-                );
-              })}
-            </Box>
-          </motion.div>
-        </AnimatePresence>
+                          {special}
+                        </Typography>
+                      )}
+                    </>
+                  )}
+                </Box>
+              </Grid>
+            );
+          })}
+        </Grid>
       </Paper>
     </Box>
   );
-            }
+}
