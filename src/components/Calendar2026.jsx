@@ -21,7 +21,6 @@ const MONTHS = [
 
 const DAYS = ["L", "M", "M", "J", "V", "S", "D"];
 
-// Días especiales (ejemplo)
 const SPECIAL_DAYS = {
   "2026-01-01": "🎉 Año Nuevo",
   "2026-05-24": "🎖️ Batalla de Pichincha",
@@ -58,8 +57,10 @@ export default function Calendar2026() {
 
   const year = 2026;
   const today = new Date();
-
   const calendar = getCalendar(year, month);
+
+  const dayName = today.toLocaleDateString("es-ES", { weekday: "long" });
+  const monthName = MONTHS[today.getMonth()];
 
   return (
     <Box>
@@ -69,7 +70,7 @@ export default function Calendar2026() {
       </Typography>
 
       <Typography textAlign="center" color="text.secondary" mb={4}>
-        Autor: Jorge Patricio Santamaría Cherrez
+        Jorge Patricio Santamaría Cherrez
       </Typography>
 
       <Paper
@@ -81,14 +82,21 @@ export default function Calendar2026() {
           overflow: "hidden",
         }}
       >
-        {/* HEADER AZUL */}
-        <Box sx={{ bgcolor: "#1976d2", color: "#fff", p: 3 }}>
-          <Typography variant="caption" sx={{ opacity: 0.85 }}>
-            {year}
+        {/* HEADER AZUL (NO ANDROID) */}
+        <Box
+          sx={{
+            background: "linear-gradient(135deg,#1e3a8a,#2563eb)",
+            color: "#fff",
+            p: 3,
+          }}
+        >
+          <Typography
+            sx={{ textTransform: "capitalize", opacity: 0.9 }}
+          >
+            {dayName} · {today.getDate()}
           </Typography>
-          <Typography variant="h4" fontWeight={800}>
-            {DAYS[(today.getDay() + 6) % 7]}, {today.getDate()} de{" "}
-            {MONTHS[today.getMonth()].slice(0, 3)}.
+          <Typography variant="h5" fontWeight={800}>
+            {monthName} {year}
           </Typography>
         </Box>
 
@@ -123,11 +131,11 @@ export default function Calendar2026() {
             mb: 1,
           }}
         >
-          {DAYS.map((d, i) => (
+          {DAYS.map((d) => (
             <Typography
               key={d}
               fontSize={12}
-              color={i === 6 ? "error.main" : "text.secondary"}
+              color="text.secondary"
             >
               {d}
             </Typography>
@@ -154,7 +162,6 @@ export default function Calendar2026() {
             >
               {calendar.map((day, index) => {
                 const col = index % 7;
-                const isSunday = col === 6;
                 const isWeekend = col >= 5;
                 const isToday = isSameDate(year, month, day, today);
                 const isSelected = day === selectedDay;
@@ -179,22 +186,20 @@ export default function Calendar2026() {
                           sx={{
                             width: 34,
                             height: 34,
-                            borderRadius: "50%",
+                            borderRadius: 2,
                             display: "flex",
                             alignItems: "center",
                             justifyContent: "center",
                             cursor: "pointer",
                             bgcolor: isSelected
-                              ? "#0d47a1"
+                              ? "#1e40af"
                               : isToday
-                              ? "#1976d2"
+                              ? "#2563eb"
                               : "transparent",
                             color: isSelected || isToday
                               ? "#fff"
-                              : isSunday
-                              ? "error.main"
                               : isWeekend
-                              ? "text.secondary"
+                              ? "#64748b"
                               : "text.primary",
                             fontWeight: isToday || isSelected ? 700 : 400,
                             position: "relative",
@@ -202,14 +207,13 @@ export default function Calendar2026() {
                         >
                           {day}
 
-                          {/* Punto día especial */}
                           {special && (
                             <Box
                               sx={{
                                 width: 6,
                                 height: 6,
                                 borderRadius: "50%",
-                                bgcolor: "#ffb300",
+                                bgcolor: "#38bdf8",
                                 position: "absolute",
                                 bottom: 4,
                               }}
@@ -227,4 +231,4 @@ export default function Calendar2026() {
       </Paper>
     </Box>
   );
-}
+            }
