@@ -5,7 +5,6 @@ import {
   Typography,
   IconButton,
   Grid,
-  useTheme,
 } from "@mui/material";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
@@ -16,15 +15,15 @@ const MONTHS = [
   "Septiembre", "Octubre", "Noviembre", "Diciembre",
 ];
 
-const DAYS_SHORT = ["D", "L", "M", "M", "J", "V", "S"]; // Día de la semana abreviado
+const DAYS_SHORT = ["D", "L", "M", "M", "J", "V", "S"]; // D L M M J V S
 
 function buildCalendar(year, month) {
-  const firstDayOfMonth = new Date(year, month, 1).getDay(); // 0 = Domingo
+  const firstDayOfMonth = new Date(year, month, 1).getDay(); // 0=Domingo, 6=Sábado
   const daysInMonth = new Date(year, month + 1, 0).getDate();
 
   const cells = [];
 
-  // Rellenar espacios vacíos hasta el primer día del mes
+  // Rellenar con espacios vacíos hasta el primer día del mes
   for (let i = 0; i < firstDayOfMonth; i++) {
     cells.push(null);
   }
@@ -41,11 +40,10 @@ export default function Calendar2026() {
   const [month, setMonth] = useState(0); // Enero por defecto
   const year = 2026;
   const today = new Date();
-  const theme = useTheme();
 
   const calendar = buildCalendar(year, month);
 
-  // Calcular qué día es hoy en el calendario actual
+  // Función para saber si un día es hoy
   const isToday = (day) => {
     return (
       day &&
@@ -55,19 +53,19 @@ export default function Calendar2026() {
     );
   };
 
-  // Obtener el nombre del día de la semana para hoy (para el encabezado)
+  // Formatear fecha actual para encabezado rojo
   const todayFormatted = today.toLocaleDateString("es-ES", {
     weekday: "short",
     day: "numeric",
     month: "short",
-  });
+  }).replace(".", "").replace(",", "");
 
   return (
     <Box sx={{ p: 2, maxWidth: 400, mx: "auto" }}>
-      {/* ENCABEZADO ROJO CON FECHA ACTUAL */}
+      {/* ENCABEZADO ROJO */}
       <Box
         sx={{
-          bgcolor: "error.main",
+          bgcolor: "#d32f2f", // Rojo como en tu ejemplo
           color: "white",
           p: 2,
           borderRadius: "8px 8px 0 0",
@@ -78,18 +76,18 @@ export default function Calendar2026() {
           {today.getFullYear()}
         </Typography>
         <Typography variant="h4" fontWeight={700}>
-          {todayFormatted.replace(".", "").replace(" ", " ").replace(",", "")}
+          {todayFormatted}
         </Typography>
       </Box>
 
-      {/* CONTENEDOR DEL CALENDARIO */}
+      {/* CALENDARIO */}
       <Paper
         elevation={0}
         sx={{
           p: 2,
           borderRadius: "0 0 8px 8px",
           bgcolor: "background.paper",
-          border: `1px solid ${theme.palette.divider}`,
+          border: "1px solid #e0e0e0",
         }}
       >
         {/* HEADER DE MES */}
@@ -140,16 +138,12 @@ export default function Calendar2026() {
                   alignItems: "center",
                   borderRadius: 1,
                   bgcolor: isToday(day)
-                    ? "primary.main"
+                    ? "#1976d2" // Azul como en tu ejemplo si quieres resaltar hoy
                     : "transparent",
                   color: isToday(day)
-                    ? "primary.contrastText"
+                    ? "white"
                     : "text.primary",
                   fontWeight: isToday(day) ? 700 : 400,
-                  transition: "all 0.2s",
-                  "&:hover": !isToday(day) && {
-                    bgcolor: "action.hover",
-                  },
                 }}
               >
                 {day && <Typography>{day}</Typography>}
