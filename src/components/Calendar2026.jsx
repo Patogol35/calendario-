@@ -106,7 +106,7 @@ export default function Calendar2026() {
         </Typography>
 
         <Typography color="text.secondary" sx={{ mt: 1 }}>
-          Autor: Jorge Patricio Santamaría Cherrez
+          Autor · Jorge Patricio Santamaría Cherrez
         </Typography>
       </Box>
 
@@ -267,4 +267,4 @@ export default function Calendar2026() {
       </Paper>
     </Box>
   );
-}
+                            }
