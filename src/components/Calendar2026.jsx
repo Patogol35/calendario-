@@ -176,7 +176,9 @@ export default function Calendar2026() {
               {calendar.map((day, index) => {
                 const col = index % 7;
                 const isWeekend = col >= 5;
-                const isToday = isSameDate(year, month, day, today);
+                const isToday =
+  today.getFullYear() === year &&
+  isSameDate(year, month, day, today);
                 const isSelected = day === selectedDay;
 
                 const key = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
