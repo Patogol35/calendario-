@@ -8,6 +8,7 @@ import {
   Select,
   MenuItem,
 } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
@@ -55,6 +56,9 @@ const isSameDate = (y, m, d, date) =>
    COMPONENTE
 ========================= */
 export default function Calendar2026() {
+  const theme = useTheme();
+  const isDark = theme.palette.mode === "dark";
+
   const [month, setMonth] = useState(0);
   const [selectedDay, setSelectedDay] = useState(null);
 
@@ -94,6 +98,7 @@ export default function Calendar2026() {
           mx: "auto",
           borderRadius: 3,
           overflow: "hidden",
+          bgcolor: "background.paper",
         }}
       >
         {/* HEADER */}
@@ -112,14 +117,13 @@ export default function Calendar2026() {
           </Typography>
         </Box>
 
-        {/* MES (SELECTOR DIRECTO) */}
+        {/* MES */}
         <Box
           display="flex"
           alignItems="center"
           justifyContent="space-between"
           px={2}
           py={1.5}
-          gap={1}
         >
           <IconButton onClick={() => setMonth(m => (m === 0 ? 11 : m - 1))}>
             <ChevronLeftIcon />
@@ -129,13 +133,7 @@ export default function Calendar2026() {
             value={month}
             onChange={(e) => setMonth(e.target.value)}
             size="small"
-            sx={{
-              minWidth: 160,
-              fontWeight: 600,
-              "& .MuiSelect-select": {
-                textAlign: "center",
-              },
-            }}
+            sx={{ fontWeight: 600, minWidth: 160 }}
           >
             {MONTHS.map((m, i) => (
               <MenuItem key={i} value={i}>
@@ -164,7 +162,13 @@ export default function Calendar2026() {
               key={i}
               fontSize={12}
               fontWeight={600}
-              color={i === 6 ? "#dc2626" : i === 5 ? "#2563eb" : "text.secondary"}
+              color={
+                i === 6
+                  ? theme.palette.error.main
+                  : i === 5
+                  ? theme.palette.primary.main
+                  : "text.secondary"
+              }
             >
               {d}
             </Typography>
@@ -200,15 +204,7 @@ export default function Calendar2026() {
                 const special = SPECIAL_DAYS[key];
 
                 return (
-                  <Box
-                    key={index}
-                    sx={{
-                      height: 56,
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
+                  <Box key={index} sx={{ height: 56, display: "flex", justifyContent: "center" }}>
                     {day && (
                       <Tooltip title={special || "Día del calendario"}>
                         <Box
@@ -223,29 +219,28 @@ export default function Calendar2026() {
                             justifyContent: "center",
                             cursor: "pointer",
                             bgcolor: isSelected
-                              ? "#1e40af"
+                              ? theme.palette.primary.dark
                               : isToday
-                              ? "#2563eb"
+                              ? theme.palette.primary.main
                               : "transparent",
                             color: isSelected || isToday
                               ? "#fff"
                               : isSunday
-                              ? "#dc2626"
+                              ? theme.palette.error.main
                               : isSaturday
-                              ? "#2563eb"
-                              : "#1e293b",
-                            fontWeight: 600,
+                              ? theme.palette.primary.main
+                              : theme.palette.text.primary,
                             transition: "all .2s",
                             "&:hover": {
                               bgcolor:
-                                isToday || isSelected
+                                isSelected || isToday
                                   ? undefined
-                                  : "rgba(37,99,235,.08)",
+                                  : theme.palette.action.hover,
                             },
                           }}
                         >
                           <Typography fontSize={14}>{day}</Typography>
-                          <CalendarMonthIcon sx={{ fontSize: 13, opacity: 0.85 }} />
+                          <CalendarMonthIcon sx={{ fontSize: 13, opacity: 0.8 }} />
                         </Box>
                       </Tooltip>
                     )}
@@ -258,4 +253,4 @@ export default function Calendar2026() {
       </Paper>
     </Box>
   );
-}
+      }
