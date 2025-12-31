@@ -8,6 +8,7 @@ import {
 } from "@mui/material";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import EventIcon from "@mui/icons-material/Event";
 import { motion, AnimatePresence } from "framer-motion";
 
 /* =========================
@@ -64,29 +65,25 @@ export default function Calendar2026() {
 
   return (
     <Box>
-{/* TITULO */}
-<Box textAlign="center" mb={5}>
-  <Typography
-    variant="h3"
-    fontWeight={900}
-    sx={{
-      background: "linear-gradient(135deg,#1e40af,#2563eb)",
-      WebkitBackgroundClip: "text",
-      WebkitTextFillColor: "transparent",
-      letterSpacing: 1.2,
-    }}
-  >
-    Calendario
-  </Typography>
+      {/* TITULO */}
+      <Box textAlign="center" mb={5}>
+        <Typography
+          variant="h3"
+          fontWeight={900}
+          sx={{
+            background: "linear-gradient(135deg,#1e40af,#2563eb)",
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+            letterSpacing: 1.2,
+          }}
+        >
+          Calendario
+        </Typography>
 
-  <Typography
-    textAlign="center"
-    color="text.secondary"
-    sx={{ mt: 1 }}
-  >
-    Autor · Jorge Patricio Santamaría Cherrez
-  </Typography>
-</Box>
+        <Typography color="text.secondary" sx={{ mt: 1 }}>
+          Autor · Jorge Patricio Santamaría Cherrez
+        </Typography>
+      </Box>
 
       <Paper
         elevation={10}
@@ -97,7 +94,7 @@ export default function Calendar2026() {
           overflow: "hidden",
         }}
       >
-        {/* HEADER AZUL */}
+        {/* HEADER */}
         <Box
           sx={{
             background: "linear-gradient(135deg,#1e3a8a,#2563eb)",
@@ -114,13 +111,7 @@ export default function Calendar2026() {
         </Box>
 
         {/* MES */}
-        <Box
-          display="flex"
-          alignItems="center"
-          justifyContent="space-between"
-          px={2}
-          py={1.5}
-        >
+        <Box display="flex" alignItems="center" justifyContent="space-between" px={2} py={1.5}>
           <IconButton onClick={() => setMonth(m => (m === 0 ? 11 : m - 1))}>
             <ChevronLeftIcon />
           </IconButton>
@@ -144,11 +135,12 @@ export default function Calendar2026() {
             mb: 1,
           }}
         >
-          {DAYS.map((d) => (
+          {DAYS.map((d, i) => (
             <Typography
-              key={d}
+              key={i}
               fontSize={12}
-              color="text.secondary"
+              fontWeight={600}
+              color={i >= 5 ? "#2563eb" : "text.secondary"}
             >
               {d}
             </Typography>
@@ -175,7 +167,9 @@ export default function Calendar2026() {
             >
               {calendar.map((day, index) => {
                 const col = index % 7;
-                const isWeekend = col >= 5;
+                const isSaturday = col === 5;
+                const isSunday = col === 6;
+                const isWeekend = isSaturday || isSunday;
                 const isToday = isSameDate(year, month, day, today);
                 const isSelected = day === selectedDay;
 
@@ -186,21 +180,22 @@ export default function Calendar2026() {
                   <Box
                     key={index}
                     sx={{
-                      height: 48,
+                      height: 52,
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
                     }}
                   >
                     {day && (
-                      <Tooltip title={special || ""}>
+                      <Tooltip title={special || (isWeekend ? "Fin de semana" : "")}>
                         <Box
                           onClick={() => setSelectedDay(day)}
                           sx={{
-                            width: 34,
-                            height: 34,
+                            width: 38,
+                            height: 38,
                             borderRadius: 2,
                             display: "flex",
+                            flexDirection: "column",
                             alignItems: "center",
                             justifyContent: "center",
                             cursor: "pointer",
@@ -208,17 +203,27 @@ export default function Calendar2026() {
                               ? "#1e40af"
                               : isToday
                               ? "#2563eb"
+                              : isSunday
+                              ? "rgba(239,68,68,.15)"
+                              : isSaturday
+                              ? "rgba(37,99,235,.15)"
                               : "transparent",
                             color: isSelected || isToday
                               ? "#fff"
-                              : isWeekend
-                              ? "#64748b"
+                              : isSunday
+                              ? "#dc2626"
+                              : isSaturday
+                              ? "#2563eb"
                               : "text.primary",
-                            fontWeight: isToday || isSelected ? 700 : 400,
+                            fontWeight: 600,
                             position: "relative",
                           }}
                         >
-                          {day}
+                          <Typography fontSize={14}>{day}</Typography>
+
+                          {isWeekend && (
+                            <EventIcon sx={{ fontSize: 12, mt: -0.3 }} />
+                          )}
 
                           {special && (
                             <Box
