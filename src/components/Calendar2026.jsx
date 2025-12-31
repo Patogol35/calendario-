@@ -200,7 +200,7 @@ export default function Calendar2026() {
                     }}
                   >
                     {day && (
-                      <Tooltip title={special || "Día del calendario"}>
+                      <Tooltip title={special || "Día"}>
                         <Box
                           onClick={() => setSelectedDay(day)}
                           sx={{
@@ -212,15 +212,14 @@ export default function Calendar2026() {
                             alignItems: "center",
                             justifyContent: "center",
                             cursor: "pointer",
+
+                            /* 🔴 SOLO HOY Y SELECCIONADO TIENEN FONDO */
                             bgcolor: isSelected
                               ? "#1e40af"
                               : isToday
                               ? "#2563eb"
-                              : isSunday
-                              ? "rgba(239,68,68,.12)"
-                              : isSaturday
-                              ? "rgba(37,99,235,.12)"
                               : "transparent",
+
                             color: isSelected || isToday
                               ? "#fff"
                               : isSunday
@@ -228,8 +227,14 @@ export default function Calendar2026() {
                               : isSaturday
                               ? "#2563eb"
                               : "#1e293b",
+
                             fontWeight: 600,
                             transition: "all .2s",
+                            "&:hover": {
+                              bgcolor: isToday || isSelected
+                                ? undefined
+                                : "rgba(37,99,235,.08)",
+                            },
                           }}
                         >
                           <Typography fontSize={14}>{day}</Typography>
